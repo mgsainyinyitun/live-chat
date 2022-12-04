@@ -22,3 +22,4 @@ const timestamp = serverTimestamp;
 // Auth
 const auth = getAuth();
 export { auth, db, timestamp };
+
