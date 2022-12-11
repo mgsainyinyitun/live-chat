@@ -1,6 +1,6 @@
 import { db } from "@/firebase/config";
 import { collection,orderBy,query,onSnapshot } from "firebase/firestore";
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 
 const getCollection = (collectionName) => {
     const documents = ref(null);
@@ -9,9 +9,10 @@ const getCollection = (collectionName) => {
 
     const q = query(collectionRef, orderBy("createdAt"));
 
-    onSnapshot( q,
+    const unsub = onSnapshot( q,
         ( snap ) =>
             {
+                console.log('snapshot');
                 let results = [];
                 snap.docs.forEach( doc => 
                 {
@@ -27,6 +28,13 @@ const getCollection = (collectionName) => {
                 error.value = "could not fetch data";
             }
         );
+        watchEffect ( (onInvalidate) => 
+        {
+            // unsub from pev collection when watcher is stop
+            onInvalidate(()=> {
+                unsub();
+            })
+        });
         return { documents,error };
 }
 export default getCollection;82

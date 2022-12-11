@@ -9,11 +9,17 @@ const requireAuth = (to, from, next) => {
   !user ? next({ name: "Welcome" }) : next();
 };
 
+const requireNoAuth  = (to,from,next) => {
+  let user = auth.currentUser;
+  user ? next({ name: "Chatroom" }) : next();
+}
+
 const routes = [
   {
     path: "/",
     name: "Welcome",
     component: Welcome,
+    beforeEnter:requireNoAuth,
   },
   {
     path: "/chatroom",
@@ -27,5 +33,7 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
+
+
 
 export default router;
